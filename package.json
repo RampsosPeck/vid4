@@ -1,0 +1,24 @@
+{
+  "name": "streaming-video",
+  "version": "1.0.0",
+  "description": "Creación de Video Streaming con Express, Socket.IO y API's de Javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Express",
+    "Socket.IO",
+    "RequestAnimationFrame",
+    "GetUserMedia",
+    "Canvas",
+    "Windoew.URL",
+    "Streaming"
+  ],
+  "author": "Jorge Peralta",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^4.1.2"
+  }
+}

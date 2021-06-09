@@ -1,0 +1,23 @@
+
+APP en tiempo real
+    *   Web socket
+    *   Socket.io
+    *   Streaming de video
+
+***** STREAMING DE VIDEO ***************************************
+    1) Window.URL.- Para manipular objetos en la URL
+    
+    2) Canvas.- Para crear el area de renderizado del stream en el cliente
+    
+    3) Navigator.getUserMedia.- Para tener acceso a la camara web
+    
+    4) Window.requestAnimationFrame.- Para gestionar la reproducción del stream del cliente
+*****************************************************************
+
+$ sudo npm init
+$ sudo npm i --save express socket.io
+
+
+
+
+

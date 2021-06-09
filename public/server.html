@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server-Streaming</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="undefined" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Stint+Ultra+Condensed&display=swap" rel="stylesheet">
+</head>
+<body style="background:#48c9b0; font-family: 'Stint Ultra Condensed', cursive;">
+    <div class="container text-center">
+
+        <div class="col-md-12 text-center mt-4"   >
+            <h1>SERVIDOR STREAMING</h1>
+        </div>
+    
+        <div class="card text-center">  
+            <div class="card-body">
+              <video id="video"></video>
+              <canvas id="canvas" width="500" height="320" ></canvas>
+            
+            </div>
+            <div class="card-footer">
+                <p class="card-text"><h2>Estamos transmitiendo en tiempo real</h2></p>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        //Document, window y navigator tiene js del lado del serve
+        (function (d, w, n, io){
+            'use strict'
+            
+            var io = io(),
+                startCamera = false, 
+                video = d.querySelector('#video'),
+                canvas = d.querySelector('#canvas'),context = canvas.getContext('2d')
+
+            n.streaming = (
+                n.getUserMedia ||
+                n.webkitGetUserMedia ||
+                n.mozGetUserMedia ||
+                n.msGetUserMedia
+            )
+                
+            n.streaming({
+                video : true,
+                audio : true
+            }, function(stream){
+                startCamera = true
+                //video.src = window.URL.createObjectURL(stream)
+                video.srcObject = stream
+                
+            }, function(err){
+                alert('error al acceder al web cam: ' + err)
+            })
+
+            //()() La tecnica de los dos parentesis en la primera tiene la funcion y en el segundo parentesis ejecuta el primer parentesis que internamente el primer () tiene una funcion    
+            window.playVideo = (function(cb){
+                return window.requestAnimationFrame ||
+                    window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.msRequestAnimationFrame ||
+                    
+                    /*function(cb){
+                        window.setTimeout(cb, 1000/100)
+                    }*/
+                    setInterval(function(cb){
+                       window.setTimeout(cb)
+                    },70)
+            })()
+
+            function streamVideo(context, canvas, video){
+                //Imagenes con toDataURL son imagenes que se forman con codigo
+                //en .2 le decimos la calidad de imagen
+                var outputStream = canvas.toDataURL('image.jpeg', .2)
+                //En aqui le digo que esta imagen dibuje de lo que captura el video y en esas pociciones
+                context.drawImage(video, 0, 0)
+
+                if(startCamera){
+                    //Cuando inicia entonces le emito mi socket un evento llamado 'streaming' y le paso la salida
+                    io.emit('streaming', outputStream)
+                }
+                playVideo(function (){
+                    streamVideo(context, canvas, video)
+                })
+            }
+
+            w.addEventListener('load', function(){
+                video.autoplay = true
+                video.style.display = 'none'
+                streamVideo(context, canvas, video)
+
+            })
+        })(document, window, navigator, io)
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
